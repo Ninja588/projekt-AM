@@ -1,6 +1,6 @@
 {
   "name": "projekt-am",
-  "main": "index.js",
+  "main": "App/index.js",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",

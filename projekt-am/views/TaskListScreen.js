@@ -1,10 +1,10 @@
 import React from "react";
 import { Box, Text } from "native-base";
 
-export default function LoginScreen() {
+export default function TaskListScreen() {
     return (
         <Box flex={1} alignItems="center" justifyContent="center">
-            <Text>Audio Screen</Text>
+            <Text>Task list Screen</Text>
         </Box>
     );
 }

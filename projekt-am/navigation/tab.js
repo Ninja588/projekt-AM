@@ -2,10 +2,11 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 
-import NotesListScreen from "../views/NotesList";
-import GalleryScreen from "../views/GalleryScreen";
-import AudioScreen from "../views/AudioScreen";
+import TaskListScreen from "../views/TaskListScreen";
+import CalendarScreen from "../views/CalendarScreen";
+import StatsScreen from "../views/StatsScreen";
 import ProfileScreen from "../views/ProfileScreen";
+import MotivationScreen from "../views/MotivationScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -15,20 +16,23 @@ function Tabs() {
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ size, focused }) => {
                     let iconName;
-                    let color = focused ? "red" : "gray";
+                    let color = focused ? "#007AFF" : "gray";
 
                     switch (route.name) {
-                        case "Notatki":
-                            iconName = "document-text-outline";
+                        case "Zadania":
+                            iconName = "list-outline";
                             break;
-                        case "Galeria":
-                            iconName = "images-outline";
+                        case "Kalendarz":
+                            iconName = "calendar-outline";
                             break;
-                        case "Audio":
-                            iconName = "mic-outline";
+                        case "Statystyki":
+                            iconName = "bar-chart-outline";
                             break;
                         case "Profil":
                             iconName = "person-outline";
+                            break;
+                        case "Motywacja":
+                            iconName = "sparkles-outline";
                             break;
                         default:
                             iconName = "ellipse-outline";
@@ -37,14 +41,15 @@ function Tabs() {
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
                 tabBarLabelStyle: { fontSize: 12 },
-                tabBarActiveTintColor: "red",
+                tabBarActiveTintColor: "#007AFF",
                 tabBarInactiveTintColor: "gray",
                 headerShown: false,
             })}
         >
-            <Tab.Screen name="Notatki" component={NotesListScreen} />
-            <Tab.Screen name="Galeria" component={GalleryScreen} />
-            <Tab.Screen name="Audio" component={AudioScreen} />
+            <Tab.Screen name="Zadania" component={TaskListScreen} />
+            <Tab.Screen name="Kalendarz" component={CalendarScreen} />
+            <Tab.Screen name="Statystyki" component={StatsScreen} />
+            <Tab.Screen name="Motywacja" component={MotivationScreen} />
             <Tab.Screen name="Profil" component={ProfileScreen} />
         </Tab.Navigator>
     );
