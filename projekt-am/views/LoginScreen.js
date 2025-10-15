@@ -1,10 +1,13 @@
 import React from "react";
-import { Box, Text } from "native-base";
+import {Button, Center, Text} from "native-base";
 
-export default function LoginScreen() {
+export default function LoginScreen({navigation}) {
     return (
-        <Box flex={1} alignItems="center" justifyContent="center">
-            <Text>Login Screen</Text>
-        </Box>
+        <Center flex={1}>
+            <Text fontSize="2xl" mb={5}>Login / Rejestracja</Text>
+            <Button onPress={() => navigation.replace("Tabs")}>
+                Zaloguj się
+            </Button>
+        </Center>
     );
 }
