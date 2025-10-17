@@ -1,0 +1,40 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "janusz",
+      "password": "123",
+      "avatar": null,
+      "email": "test@test.com"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "1",
+      "userId": 1,
+      "title": "kupic mleko",
+      "description": "kiedys wroci",
+      "done": false,
+      "date": "2025-10-17",
+      "image": null
+    },
+    {
+      "id": "2",
+      "userId": 1,
+      "title": "zrobic projekt",
+      "description": "projekt na aplikacje mobilne",
+      "done": false,
+      "date": "2025-10-17",
+      "image": null
+    },
+    {
+      "id": "3",
+      "userId": 1,
+      "title": "test3",
+      "description": "test3 suhgdafiugh",
+      "done": true,
+      "date": "2025-10-18",
+      "image": null
+    }
+  ]
+}
