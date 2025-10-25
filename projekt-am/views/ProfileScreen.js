@@ -24,6 +24,7 @@ export default function ProfileScreen() {
             <Text fontSize={48} fontWeight="bold">Nazwa</Text>
             <Box
                 mt={6}
+                mb={6}
                 rounded="2xl"
                 shadow={3}
                 bg="gray.100"
