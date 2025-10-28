@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { Box, Text, Spinner, Pressable, Badge, HStack, VStack, Button } from "native-base";
+import { useIsFocused } from "@react-navigation/native";
 import axiosInstance from "../backend/axiosInstance";
 
 export default function TaskListScreen({ navigation }) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
-
-    const fetchTasks = async () => {
-        try {
-            setLoading(true);
-            const response = await axiosInstance.get("/tasks");
-            setTasks(response.data);
-        } catch (error) {
-            console.error("Error: ", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const isFocused = useIsFocused();
 
     // jak nie ma tych trzech kropek to kaplica (nadpisuje wtedy wszystkie dane i zostaje jedynie zmienione 'done' XD)
     // trzy kropki robia kopie wszystkich pól i zmienia sie wtedy tylko 'done'
@@ -38,13 +28,28 @@ export default function TaskListScreen({ navigation }) {
     };
 
     useEffect(() => {
-        fetchTasks();
-    }, []);
+        const fetchTasks = async () => {
+            try {
+                setLoading(true);
+                const response = await axiosInstance.get("/tasks");
+                setTasks(response.data);
+            } catch (error) {
+                console.error("Error: ", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (isFocused) fetchTasks();
+    }, [isFocused]);
 
     const renderTask = ({ item }) => {
         return (
             <Pressable
-                onPress={() => navigation.navigate("TaskDetails", {})}
+                onPress={() => {
+                    // console.log("Przekazuję taskId:", item.id);
+                    navigation.getParent().navigate("TaskDetails", {itemId: item.id})
+                }}
             >
                 <Box
                     bg="gray.100"
