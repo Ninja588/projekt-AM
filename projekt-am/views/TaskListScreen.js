@@ -56,7 +56,8 @@ export default function TaskListScreen({ navigation }) {
                     p={4}
                     rounded="2xl"
                     mb={3}
-                    w={"100%"}
+                    w={"98%"}
+                    ml={1}
                     shadow={1}
                 >
                     <HStack justifyContent="space-between" alignItems="center">
