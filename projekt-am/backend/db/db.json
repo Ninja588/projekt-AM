@@ -35,7 +35,9 @@
       "done": false,
       "date": "10.11.2025",
       "priority": "Średni",
-      "tags": ["studia"],
+      "tags": [
+        "studia"
+      ],
       "image": null
     },
     {
@@ -69,6 +71,19 @@
       "date": "11.11.2025",
       "priority": "Średni",
       "tags": [],
+      "image": null
+    },
+    {
+      "id": "a722",
+      "userId": "1",
+      "title": "Dodawanie zadania 1",
+      "description": "Hej Kamil \nCzemu to czytasz",
+      "done": false,
+      "date": "10.11.2025",
+      "priority": "Wysoki",
+      "tags": [
+        "Test"
+      ],
       "image": null
     }
   ]
