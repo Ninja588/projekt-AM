@@ -1,40 +1,66 @@
 import React, { useState } from "react";
 import {Button, Text, VStack, HStack, Pressable, Center} from "native-base";
 import {Keyboard, TextInput, TouchableWithoutFeedback, StyleSheet} from "react-native";
+import axiosInstance from "../backend/axiosInstance";
 
-export default function LoginScreen({ navigation }) {
+import { useAuth } from "../backend/context/AuthContext";
+
+export default function LoginScreen() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [registerSwitch, setRegisterSwitch] = useState(false);
 
-    const handleLogin = () => {
-        if (username.trim() === "") {
-            alert("Podaj nazwę użytkownika!");
+    const { login } = useAuth();
+
+    const handleLogin = async () => {
+        if (username.trim() === "" || password.trim() === "") {
+            alert("Podaj login i hasło!");
             return;
         }
-        if (username.trim() === "admin" && password.trim() === "admin") {
-            navigation.replace("Tabs");
-            return;
+
+        try {
+            const response = await axiosInstance.get(`/users?username=${username}&password=${password}`);
+            if (response.data.length > 0) {
+                const user = response.data[0];
+                alert(`Witaj, ${user.username}!`);
+                await login(user);
+            } else {
+                alert("Błędny login lub hasło!");
+            }
+        } catch (error) {
+            console.error("Błąd logowania:", error);
+            alert("Wystąpił błąd przy logowaniu.");
         }
-        alert("Błędny login lub hasło!");
     };
 
-    const handleRegister = () => {
-        if (username.trim() === "") {
-            alert("Podaj nazwę użytkownika!");
+    const handleRegister = async () => {
+        if (!username.trim() || !email.trim() || !password.trim()) {
+            alert("Wypełnij wszystkie pola!");
             return;
         }
-        else if (email.trim() === "") {
-            alert("Podaj email!");
-            return;
+
+        try {
+            const checkUser = await axiosInstance.get(`/users?username=${username}`);
+            if (checkUser.data.length > 0) {
+                alert("Taki użytkownik już istnieje!");
+                return;
+            }
+
+            const newUser = {
+                username,
+                email,
+                password,
+                avatar: null
+            };
+
+            await axiosInstance.post("/users", newUser);
+            alert("Konto zostało utworzone!");
+            handleShowRegister();
+        } catch (error) {
+            console.error("Błąd rejestracji:", error);
+            alert("Wystąpił błąd przy rejestracji.");
         }
-        else if (password.trim() === "") {
-            alert("Podaj hasło!");
-            return;
-        }
-        alert("Konto zostało pomyślnie utworzone!")
-        handleShowRegister();
     };
 
     const handleShowRegister = () => {

@@ -3,11 +3,14 @@ import { FlatList } from "react-native";
 import { Box, Text, Spinner, Pressable, Badge, HStack, VStack, Button } from "native-base";
 import { useIsFocused } from "@react-navigation/native";
 import axiosInstance from "../backend/axiosInstance";
+import {useAuth} from "../backend/context/AuthContext";
 
 export default function TaskListScreen({ navigation }) {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const isFocused = useIsFocused();
+
+    const { user } = useAuth();
 
     // jak nie ma tych trzech kropek to kaplica (nadpisuje wtedy wszystkie dane i zostaje jedynie zmienione 'done' XD)
     // trzy kropki robia kopie wszystkich pól i zmienia sie wtedy tylko 'done'
@@ -31,7 +34,8 @@ export default function TaskListScreen({ navigation }) {
         const fetchTasks = async () => {
             try {
                 setLoading(true);
-                const response = await axiosInstance.get("/tasks");
+                // const response = await axiosInstance.get("/tasks");
+                const response = await axiosInstance.get(`/tasks?userId=${user.id}`);
                 setTasks(response.data);
             } catch (error) {
                 console.error("Error: ", error);
@@ -41,7 +45,7 @@ export default function TaskListScreen({ navigation }) {
         };
 
         if (isFocused) fetchTasks();
-    }, [isFocused]);
+    }, [isFocused, user]);
 
     const renderTask = ({ item }) => {
         return (

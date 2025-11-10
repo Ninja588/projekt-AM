@@ -3,8 +3,12 @@ import {Box, Text, ScrollView, Pressable, Divider, Switch, HStack} from "native-
 import logo from  "../assets/images/kfc.png";
 import {Image, StyleSheet, View} from "react-native"
 
+import { useAuth } from "../backend/context/AuthContext";
+
 export default function ProfileScreen() {
     const [notifications, setNotifications] = useState(true);
+
+    const { logout, user } = useAuth();
 
     const styles = StyleSheet.create({
         profileImage: {
@@ -21,7 +25,7 @@ export default function ProfileScreen() {
             <View>
                 <Image style={styles.profileImage} source={logo} />
             </View>
-            <Text fontSize={48} fontWeight="bold">Nazwa</Text>
+            <Text fontSize={48} fontWeight="bold">{user.username}</Text>
             <Box
                 mt={6}
                 mb={6}
@@ -64,7 +68,7 @@ export default function ProfileScreen() {
                     </Pressable>
                     <Divider mb={3} />
 
-                    <Pressable onPress={() => console.log("Wyloguj sie")}>
+                    <Pressable onPress={() => logout()}>
                         <Text fontSize="md" color="red.500">
                             Wyloguj się
                         </Text>

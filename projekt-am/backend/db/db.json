@@ -6,6 +6,13 @@
       "password": "123",
       "avatar": null,
       "email": "test@test.com"
+    },
+    {
+      "id": "a4ac",
+      "username": "test",
+      "email": "test@gmail.com",
+      "password": "1234",
+      "avatar": null
     }
   ],
   "tasks": [
