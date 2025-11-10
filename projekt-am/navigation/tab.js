@@ -7,6 +7,8 @@ import CalendarScreen from "../views/CalendarScreen";
 import StatsScreen from "../views/StatsScreen";
 import ProfileScreen from "../views/ProfileScreen";
 import MotivationScreen from "../views/MotivationScreen";
+import TodayTaskScreen from "../views/TodayTaskScreen";
+import IncomingTaskScreen from "../views/IncomingTaskScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,7 +21,13 @@ function Tabs() {
                     let color = focused ? "#007AFF" : "gray";
 
                     switch (route.name) {
-                        case "Zadania":
+                        // case "Zadania":
+                        //     iconName = "list-outline";
+                        //     break;
+                        case "Nadchodzące":
+                            iconName = "list-outline";
+                            break;
+                        case "Dziś":
                             iconName = "list-outline";
                             break;
                         case "Kalendarz":
@@ -46,7 +54,9 @@ function Tabs() {
                 headerShown: false,
             })}
         >
-            <Tab.Screen name="Zadania" component={TaskListScreen} />
+            {/*<Tab.Screen name="Zadania" component={TaskListScreen} />*/}
+            <Tab.Screen name="Dziś" component={TodayTaskScreen} />
+            <Tab.Screen name="Nadchodzące" component={IncomingTaskScreen} />
             <Tab.Screen name="Kalendarz" component={CalendarScreen} />
             <Tab.Screen name="Statystyki" component={StatsScreen} />
             <Tab.Screen name="Motywacja" component={MotivationScreen} />
