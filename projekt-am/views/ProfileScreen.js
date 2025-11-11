@@ -1,14 +1,38 @@
-import React, {useState} from "react";
-import {Box, Text, ScrollView, Pressable, Divider, Switch, HStack} from "native-base";
-import logo from  "../assets/images/kfc.png";
-import {Image, StyleSheet, View} from "react-native"
-
+import React, { useState, useEffect } from "react";
+import {Box, Text, ScrollView, Pressable, Divider, Switch, HStack, Button} from "native-base";
+import {Image, StyleSheet, View, TextInput } from "react-native";
+import logo from "../assets/images/kfc.png";
+import axiosInstance from "../backend/axiosInstance";
 import { useAuth } from "../backend/context/AuthContext";
 
 export default function ProfileScreen() {
+    const { user, login, logout } = useAuth();
     const [notifications, setNotifications] = useState(true);
 
-    const { logout, user } = useAuth();
+    const [showEmailForm, setShowEmailForm] = useState(false);
+    const [newEmail, setNewEmail] = useState("");
+    const [emailMessage, setEmailMessage] = useState("");
+    const [emailLoading, setEmailLoading] = useState(false);
+
+    const [showPasswordForm, setShowPasswordForm] = useState(false);
+    const [oldPassword, setOldPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [passwordMessage, setPasswordMessage] = useState("");
+    const [passwordLoading, setPasswordLoading] = useState(false);
+
+    const [serverUser, setServerUser] = useState(null);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const res = await axiosInstance.get(`/users/${user.id}`);
+                setServerUser(res.data);
+            } catch (error) {
+                console.error("Błąd pobierania danych użytkownika:", error);
+            }
+        };
+        fetchUserData();
+    }, [user.id]);
 
     const styles = StyleSheet.create({
         profileImage: {
@@ -18,14 +42,90 @@ export default function ProfileScreen() {
             height: 150,
             width: 150,
         },
+        input: {
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 10,
+            padding: 10,
+            marginBottom: 10,
+            fontSize: 16,
+        },
     });
 
+    const handleEmailChange = async () => {
+        if (!newEmail.trim()) {
+            setEmailMessage("Wpisz nowy e-mail.");
+            return;
+        }
+
+        try {
+            setEmailLoading(true);
+            setEmailMessage("");
+
+            const res = await axiosInstance.patch(`/users/${user.id}`, {
+                email: newEmail,
+            });
+
+            await login(res.data);
+            setServerUser(res.data);
+            setEmailMessage("E-mail został zaktualizowany!");
+            setShowEmailForm(false);
+            setNewEmail("");
+        } catch (error) {
+            console.error("Błąd aktualizacji e-maila:", error);
+            setEmailMessage("Nie udało się zmienić e-maila.");
+        } finally {
+            setEmailLoading(false);
+        }
+    };
+
+    const handlePasswordChange = async () => {
+        if (!oldPassword.trim() || !newPassword.trim()) {
+            setPasswordMessage("Podaj stare i nowe hasło.");
+            return;
+        }
+
+        try {
+            setPasswordLoading(true);
+            setPasswordMessage("");
+
+            const response = await axiosInstance.get(`/users/${user.id}`);
+            const currentUser = response.data;
+
+            if (currentUser.password !== oldPassword) {
+                setPasswordMessage("Stare hasło jest nieprawidłowe.");
+                setPasswordLoading(false);
+                return;
+            }
+
+            const res = await axiosInstance.patch(`/users/${user.id}`, {
+                password: newPassword,
+            });
+
+            await login(res.data);
+            setServerUser(res.data);
+            setPasswordMessage("Hasło zostało pomyślnie zmienione!");
+            setShowPasswordForm(false);
+            setOldPassword("");
+            setNewPassword("");
+        } catch (error) {
+            console.error("Błąd zmiany hasła:", error);
+            setPasswordMessage("Nie udało się zmienić hasła.");
+        } finally {
+            setPasswordLoading(false);
+        }
+    };
+
     return (
-        <Box flex={1} pt={20} px={5} bg={"white"} alignItems="center">
+        <Box flex={1} pt={20} px={5} bg="white" alignItems="center">
             <View>
                 <Image style={styles.profileImage} source={logo} />
             </View>
-            <Text fontSize={48} fontWeight="bold">{user.username}</Text>
+
+            <Text fontSize={32} fontWeight="bold" mt={3}>
+                {serverUser?.username || user.username}
+            </Text>
+
             <Box
                 mt={6}
                 mb={6}
@@ -47,18 +147,116 @@ export default function ProfileScreen() {
                     </HStack>
                     <Divider mb={3} />
 
-                    <Pressable onPress={() => console.log("Zmien email")}>
-                        <Text fontSize="md" mb={3}>
-                            Zmień email
-                        </Text>
-                    </Pressable>
+                    {!showEmailForm ? (
+                        <Pressable onPress={() => setShowEmailForm(true)}>
+                            <Text fontSize="md" mb={3} color="blue.600">
+                                Zmień email
+                            </Text>
+                        </Pressable>
+                    ) : (
+                        <Box>
+                            <Text mb={2}>Nowy adres e-mail:</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="np. nowy@mail.com"
+                                value={newEmail}
+                                onChangeText={setNewEmail}
+                                autoCapitalize="none"
+                            />
+                            <HStack justifyContent="space-between">
+                                <Button
+                                    onPress={handleEmailChange}
+                                    isLoading={emailLoading}
+                                    colorScheme="blue"
+                                >
+                                    Zapisz
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    onPress={() => {
+                                        setShowEmailForm(false);
+                                        setNewEmail("");
+                                        setEmailMessage("");
+                                    }}
+                                >
+                                    Anuluj
+                                </Button>
+                            </HStack>
+                            {emailMessage ? (
+                                <Text
+                                    mt={2}
+                                    color={
+                                        emailMessage.includes("błąd") ? "red.500" : "green.500"
+                                    }
+                                >
+                                    {emailMessage}
+                                </Text>
+                            ) : null}
+                        </Box>
+                    )}
+
                     <Divider mb={3} />
 
-                    <Pressable onPress={() => console.log("Zmien haslo")}>
-                        <Text fontSize="md" mb={3}>
-                            Zmień hasło
-                        </Text>
-                    </Pressable>
+                    {!showPasswordForm ? (
+                        <Pressable onPress={() => setShowPasswordForm(true)}>
+                            <Text fontSize="md" mb={3} color="blue.600">
+                                Zmień hasło
+                            </Text>
+                        </Pressable>
+                    ) : (
+                        <Box>
+                            <Text mb={2}>Obecne hasło:</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Podaj obecne hasło"
+                                secureTextEntry
+                                value={oldPassword}
+                                onChangeText={setOldPassword}
+                            />
+                            <Text mb={2}>Nowe hasło:</Text>
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Podaj nowe hasło"
+                                secureTextEntry
+                                value={newPassword}
+                                onChangeText={setNewPassword}
+                            />
+                            <HStack justifyContent="space-between">
+                                <Button
+                                    onPress={handlePasswordChange}
+                                    isLoading={passwordLoading}
+                                    colorScheme="blue"
+                                >
+                                    Zapisz
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    onPress={() => {
+                                        setShowPasswordForm(false);
+                                        setOldPassword("");
+                                        setNewPassword("");
+                                        setPasswordMessage("");
+                                    }}
+                                >
+                                    Anuluj
+                                </Button>
+                            </HStack>
+                            {passwordMessage ? (
+                                <Text
+                                    mt={2}
+                                    color={
+                                        passwordMessage.includes("błąd") ||
+                                        passwordMessage.includes("nie udało")
+                                            ? "red.500"
+                                            : "green.500"
+                                    }
+                                >
+                                    {passwordMessage}
+                                </Text>
+                            ) : null}
+                        </Box>
+                    )}
+
                     <Divider mb={3} />
 
                     <Pressable onPress={() => console.log("Zmien zdjecie profilowe")}>
@@ -68,7 +266,7 @@ export default function ProfileScreen() {
                     </Pressable>
                     <Divider mb={3} />
 
-                    <Pressable onPress={() => logout()}>
+                    <Pressable onPress={logout}>
                         <Text fontSize="md" color="red.500">
                             Wyloguj się
                         </Text>
