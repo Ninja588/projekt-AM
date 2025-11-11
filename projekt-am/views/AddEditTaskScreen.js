@@ -1,19 +1,40 @@
-import React, { useState } from "react";
-import {Badge, Box, Button, HStack, Pressable, Text, VStack} from "native-base";
-import { TextInput } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Badge, Box, Button, HStack, Pressable, Text, VStack } from "native-base";
+import { TextInput, Platform } from "react-native";
 import axiosInstance from "../backend/axiosInstance";
 import { useAuth } from "../backend/context/AuthContext";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
-export default function AddEditTaskScreen({ navigation }) {
+export default function AddEditTaskScreen({ route, navigation }) {
+    const { user } = useAuth();
+
+    // czy edycja
+    const editableTask = route.params?.task || null;
+
+    // pola
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [priority, setPriority] = useState("Średni");
-    const { user } = useAuth();
+    const [date, setDate] = useState(null);
 
+    // tagi
     const [tagInput, setTagInput] = useState("");
     const [tags, setTags] = useState([]);
 
+    const [showDatePicker, setShowDatePicker] = useState(false);
+
     const today = new Intl.DateTimeFormat("pl-PL").format(new Date());
+
+    // Jesli Edycja to:
+    useEffect(() => {
+        if (editableTask) {
+            setTitle(editableTask.title);
+            setDescription(editableTask.description);
+            setPriority(editableTask.priority);
+            setDate(editableTask.date);
+            setTags(editableTask.tags || []);
+        }
+    }, [editableTask]);
 
     const handleAddTag = () => {
         if (tagInput.trim() && !tags.includes(tagInput.trim())) {
@@ -26,22 +47,37 @@ export default function AddEditTaskScreen({ navigation }) {
         setTags(tags.filter(t => t !== tag));
     };
 
-    const handleAdd = async () => {
+    const onChangeDate = (event, selectedDate) => {
+        setShowDatePicker(false);
+        if (selectedDate) {
+            const formatted = selectedDate.toLocaleDateString("pl-PL");
+            setDate(formatted);
+        }
+    };
+
+    const handleSave = async () => {
         if (!title.trim()) return;
 
-        const newTask = {
+        const taskPayload = {
             userId: user.id,
             title,
             description,
-            done: false,
-            date: today,
             priority,
+            date: date || today,
             tags,
-            image: null,
+            done: editableTask ? editableTask.done : false,
+            image: editableTask ? editableTask.image : null
         };
 
         try {
-            await axiosInstance.post("/tasks", newTask);
+            if (editableTask) {
+                //Edycja
+                await axiosInstance.put(`/tasks/${editableTask.id}`, taskPayload);
+            } else {
+                //dodawanie
+                await axiosInstance.post("/tasks", taskPayload);
+            }
+
             navigation.goBack();
         } catch (error) {
             console.error("Error:", error);
@@ -52,21 +88,24 @@ export default function AddEditTaskScreen({ navigation }) {
         <Box flex={1} bg="white" p={5} pt={20}>
             <VStack space={4}>
 
-                <Text fontSize="md" bold> Zmiana nazwy: </Text>
+                <Text fontSize="2xl" bold>
+                    {editableTask ? "Edytuj zadanie" : "Dodaj zadanie"}
+                </Text>
+
+                <Text fontSize="md" bold>Nazwa:</Text>
                 <TextInput
                     style={{
                         borderWidth: 1,
                         padding: 10,
                         borderRadius: 10,
-                        height: 40,
-                        textAlignVertical: "top"
+                        height: 40
                     }}
                     placeholder="<Nazwa>"
                     value={title}
                     onChangeText={setTitle}
                 />
 
-                <Text fontSize="md" bold> Zmiana opisu: </Text>
+                <Text fontSize="md" bold>Opis:</Text>
                 <TextInput
                     style={{
                         borderWidth: 1,
@@ -81,8 +120,7 @@ export default function AddEditTaskScreen({ navigation }) {
                     onChangeText={setDescription}
                 />
 
-
-                <Text fontSize="md" bold>Zmiana priorytetów:</Text>
+                <Text fontSize="md" bold>Priorytet:</Text>
                 <HStack space={2}>
                     {["Wysoki", "Średni", "Niski"].map(level => (
                         <Button
@@ -96,7 +134,20 @@ export default function AddEditTaskScreen({ navigation }) {
                     ))}
                 </HStack>
 
-                <Text fontSize="md" bold>Dodawanie tagów:</Text>
+                <Text fontSize="md" bold>Termin:</Text>
+                <Button colorScheme="green" onPress={() => setShowDatePicker(true)}>
+                    {date ? `Wybrano: ${date}` : "Wybierz datę"}
+                </Button>
+                {showDatePicker && (
+                    <DateTimePicker
+                        value={new Date()}
+                        mode="date"
+                        display={Platform.OS === "ios" ? "spinner" : "calendar"}
+                        onChange={onChangeDate}
+                    />
+                )}
+
+                <Text fontSize="md" bold>Tagi:</Text>
                 <HStack space={2}>
                     <TextInput
                         style={{
@@ -121,10 +172,10 @@ export default function AddEditTaskScreen({ navigation }) {
                     ))}
                 </HStack>
 
-
-                <Button mt={5} colorScheme="blue" onPress={handleAdd}>
-                    Zapisz
+                <Button mt={5} colorScheme="blue" onPress={handleSave}>
+                    {editableTask ? "Zapisz zmiany" : "Dodaj zadanie"}
                 </Button>
+
             </VStack>
         </Box>
     );

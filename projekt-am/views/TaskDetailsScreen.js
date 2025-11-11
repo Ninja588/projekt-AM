@@ -98,7 +98,7 @@ export default function TaskDetailsScreen({ route, navigation }) {
 
                     <Button
                         colorScheme="blue"
-                        onPress={() => navigation.navigate("AddEditTask", { taskId })}
+                        onPress={() => navigation.navigate("AddEditTask", { task })}
                     >
                         Edytuj zadanie
                     </Button>
