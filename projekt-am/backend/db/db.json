@@ -4,7 +4,7 @@
       "id": "1",
       "username": "janusz",
       "password": "1234",
-      "avatar": "file:///var/mobile/Containers/Data/Application/1E2A807E-E019-4FC7-8D7F-94FFB3126DCC/Library/Caches/ExponentExperienceData/@anonymous/projekt-am-6a9cf809-50eb-4266-a8ed-22d29d7ba0eb/ImagePicker/3CFAE2CA-C58F-4C2F-ADDB-8EC52C6AFB05.jpg",
+      "avatar": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/08801654-afc5-498b-8272-f31763753efe.jpeg",
       "email": "nowy@gmail.com"
     },
     {
@@ -21,7 +21,7 @@
       "userId": 1,
       "title": "kupic mleko",
       "description": "kiedys wroci",
-      "done": false,
+      "done": true,
       "date": "12.11.2025",
       "priority": "Wysoki",
       "tags": [],
@@ -56,17 +56,20 @@
       "id": "a8c2"
     },
     {
-      "id": "5817",
       "userId": "1",
       "title": "Datatest2",
       "description": "Datatest2",
-      "done": false,
-      "date": null,
       "priority": "Niski",
+      "date": "11.11.2025",
       "tags": [
         "Test"
       ],
-      "image": null
+      "images": [
+        "file:///data/user/0/host.exp.exponent/cache/ImagePicker/24e9d69d-cc3a-4d02-bc44-8dbd2899c3f7.jpeg",
+        "file:///data/user/0/host.exp.exponent/cache/ImagePicker/1bcd5786-f4d3-48d2-a43e-2b6b15356252.jpeg"
+      ],
+      "done": false,
+      "id": "5817"
     },
     {
       "userId": "1",
@@ -78,8 +81,10 @@
         "Doro",
         "Przyjaźń"
       ],
+      "images": [
+        "file:///data/user/0/host.exp.exponent/cache/ImagePicker/2b32365b-6f94-4546-a507-1cb33d283634.jpeg"
+      ],
       "done": false,
-      "image": null,
       "id": "1088"
     },
     {
@@ -105,7 +110,7 @@
       "tags": [
         "Edycja"
       ],
-      "done": false,
+      "done": true,
       "image": null
     },
     {

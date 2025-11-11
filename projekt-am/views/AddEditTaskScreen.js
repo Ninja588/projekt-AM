@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {Badge, Box, Button, HStack, Pressable, ScrollView, Text, VStack} from "native-base";
-import { TextInput, Platform } from "react-native";
+import { TextInput, Platform, Image } from "react-native";
 import axiosInstance from "../backend/axiosInstance";
 import { useAuth } from "../backend/context/AuthContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
 
 export default function AddEditTaskScreen({ route, navigation }) {
     const { user } = useAuth();
@@ -23,6 +24,8 @@ export default function AddEditTaskScreen({ route, navigation }) {
 
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+    const [images, setImages] = useState([]);
+
     const today = new Intl.DateTimeFormat("pl-PL").format(new Date());
 
     // Jeśli Edycja
@@ -33,6 +36,7 @@ export default function AddEditTaskScreen({ route, navigation }) {
             setPriority(editableTask.priority);
             setDate(editableTask.date);
             setTags(editableTask.tags || []);
+            setImages(editableTask.images || []);
         }
     }, [editableTask]);
 
@@ -45,6 +49,28 @@ export default function AddEditTaskScreen({ route, navigation }) {
 
     const removeTag = (tag) => {
         setTags(tags.filter(t => t !== tag));
+    };
+
+    const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+            alert("Brak uprawnień do galerii");
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            quality: 0.7
+        });
+
+        if (!result.canceled) {
+            const uri = result.assets[0].uri;
+            setImages([...images, uri]);
+        }
+    };
+
+    const removeImage = (uri) => {
+        setImages(images.filter(img => img !== uri));
     };
 
     const onChangeDate = (event, selectedDate) => {
@@ -64,8 +90,8 @@ export default function AddEditTaskScreen({ route, navigation }) {
             priority,
             date: date || today,
             tags,
+            images,
             done: editableTask ? editableTask.done : false,
-            image: editableTask ? editableTask.image : null
         };
 
         try {
@@ -119,6 +145,26 @@ export default function AddEditTaskScreen({ route, navigation }) {
                         value={description}
                         onChangeText={setDescription}
                     />
+
+                    <Text fontSize="md" bold>Zdjęcia:</Text>
+                    <Button colorScheme="purple" onPress={pickImage}>
+                        Dodaj zdjęcie
+                    </Button>
+                    <HStack space={2} flexWrap="wrap" mt={2}>
+                        {images.map((uri) => (
+                            <Pressable key={uri} onPress={() => removeImage(uri)}>
+                                <Image
+                                    source={{ uri }}
+                                    style={{
+                                        width: 80,
+                                        height: 80,
+                                        borderRadius: 10,
+                                        margin: 4
+                                    }}
+                                />
+                            </Pressable>
+                        ))}
+                    </HStack>
 
                     <Text fontSize="md" bold>Priorytet:</Text>
                     <HStack space={2}>
