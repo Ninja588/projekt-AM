@@ -188,7 +188,7 @@ export default function ProfileScreen() {
 
                     {!showEmailForm ? (
                         <Pressable onPress={() => setShowEmailForm(true)}>
-                            <Text fontSize="md" mb={3} color="blue.600">
+                            <Text fontSize="md" mb={3} color="black.600">
                                 Zmień email
                             </Text>
                         </Pressable>
@@ -239,7 +239,7 @@ export default function ProfileScreen() {
 
                     {!showPasswordForm ? (
                         <Pressable onPress={() => setShowPasswordForm(true)}>
-                            <Text fontSize="md" mb={3} color="blue.600">
+                            <Text fontSize="md" mb={3} color="black.600">
                                 Zmień hasło
                             </Text>
                         </Pressable>
