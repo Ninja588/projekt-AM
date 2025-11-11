@@ -3,6 +3,7 @@ import {useIsFocused} from "@react-navigation/native";
 import {useAuth} from "../backend/context/AuthContext";
 import axiosInstance from "../backend/axiosInstance";
 import {Badge, Box, Button, HStack, Pressable, Spinner, VStack, Text, FlatList} from "native-base";
+import {Alert} from "react-native";
 
 export default function IncomingTaskScreen({navigation}) {
     const [tasks, setTasks] = useState([]);
@@ -53,12 +54,37 @@ export default function IncomingTaskScreen({navigation}) {
         data: filteredTasks.filter(task => task.date === day)
     }));
 
+    const deleteTask = async (task) => {
+        try {
+            await axiosInstance.delete(`/tasks/${task.id}`);
+            setTasks(prevTasks => prevTasks.filter(t => t.id !== task.id));
+        } catch (error) {
+            console.error("Error: ", error);
+        }
+    };
+
+    const handleLongPress = async(task) => {
+        Alert.alert('Usuwanie zadania', 'Czy napewno chcesz usunąć to zadanie?', [
+            {
+                text: "Usuń",
+                onPress: () => deleteTask(task),
+                style: "destructive"
+            },
+            {
+                text: "Anuluj",
+                style: "cancel"
+            }
+        ]);
+    }
+
     const renderTask = ({ item }) => (
         <Box bg="gray.100" p={4} rounded="2xl" mb={3} w="98%" ml={1} shadow={1}>
             <HStack justifyContent="space-between" alignItems="center">
                 <Pressable
                     style={{ flex: 1 }}
                     onPress={() => navigation.getParent().navigate("TaskDetails", { itemId: item.id })}
+                    onLongPress={() => handleLongPress(item)}
+                    delayLongPress={500}
                 >
                     <VStack>
                         <Text fontSize="md" bold>{item.title}</Text>
