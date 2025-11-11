@@ -53,7 +53,7 @@ export default function TodayTaskScreen({ navigation }) {
 
 
     // jak nie ma tych trzech kropek to kaplica (nadpisuje wtedy wszystkie dane i zostaje jedynie zmienione 'done' XD)
-    // trzy kropki robia kopie wszystkich pól i zmienia sie wtedy tylko 'done' F
+    // trzy kropki robia kopie wszystkich pól i zmienia sie wtedy tylko 'done' GG
     const toggleDone = async (task) => {
         try {
             await axiosInstance.put(`/tasks/${task.id}`, {

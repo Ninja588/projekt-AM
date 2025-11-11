@@ -25,7 +25,7 @@ export default function AddEditTaskScreen({ route, navigation }) {
 
     const today = new Intl.DateTimeFormat("pl-PL").format(new Date());
 
-    // Jesli Edycja
+    // Jeśli Edycja
     useEffect(() => {
         if (editableTask) {
             setTitle(editableTask.title);
