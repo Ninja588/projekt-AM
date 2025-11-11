@@ -3,9 +3,10 @@
     {
       "id": "1",
       "username": "janusz",
-      "password": "123",
+      "password": "1234",
       "avatar": null,
-      "email": "test@test.com"
+      "email": "nowy@gmail.com",
+      "image": "file:///var/mobile/Containers/Data/Application/1E2A807E-E019-4FC7-8D7F-94FFB3126DCC/Library/Caches/ExponentExperienceData/@anonymous/projekt-am-6a9cf809-50eb-4266-a8ed-22d29d7ba0eb/ImagePicker/B9A7CDF3-4469-4191-AAB9-83BDBFB70D3C.jpg"
     },
     {
       "id": "a4ac",

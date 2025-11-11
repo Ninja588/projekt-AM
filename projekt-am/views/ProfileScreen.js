@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {Box, Text, ScrollView, Pressable, Divider, Switch, HStack, Button} from "native-base";
-import {Image, StyleSheet, View, TextInput } from "react-native";
-import logo from "../assets/images/kfc.png";
+import {Image, StyleSheet, View, TextInput, Alert} from "react-native";
+import logo from "../assets/images/blank.png";
 import axiosInstance from "../backend/axiosInstance";
 import { useAuth } from "../backend/context/AuthContext";
 
+import * as ImagePicker from 'expo-image-picker';
+
 export default function ProfileScreen() {
-    const { user, login, logout } = useAuth();
+    const { user, logout, refresh } = useAuth();
     const [notifications, setNotifications] = useState(true);
 
     const [showEmailForm, setShowEmailForm] = useState(false);
@@ -19,20 +21,6 @@ export default function ProfileScreen() {
     const [newPassword, setNewPassword] = useState("");
     const [passwordMessage, setPasswordMessage] = useState("");
     const [passwordLoading, setPasswordLoading] = useState(false);
-
-    const [serverUser, setServerUser] = useState(null);
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const res = await axiosInstance.get(`/users/${user.id}`);
-                setServerUser(res.data);
-            } catch (error) {
-                console.error("Błąd pobierania danych użytkownika:", error);
-            }
-        };
-        fetchUserData();
-    }, [user.id]);
 
     const styles = StyleSheet.create({
         profileImage: {
@@ -52,6 +40,59 @@ export default function ProfileScreen() {
         },
     });
 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            const res = await axiosInstance.patch(`/users/${user.id}`, {
+                image: result.assets[0].uri
+            });
+            await refresh(res.data);
+        }
+    };
+
+    const takeImage = async () => {
+        if(await ImagePicker.requestCameraPermissionsAsync()) {
+            let result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ['images'],
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                const res = await axiosInstance.patch(`/users/${user.id}`, {
+                    image: result.assets[0].uri
+                });
+                await refresh(res.data);
+            }
+        }
+    }
+
+    const handlePickImage = async () => {
+        Alert.alert('Wybieranie zdjęcia profilowego', '', [
+            {
+                text: "Wybierz z galerii",
+                onPress: () => pickImage(),
+                style: "default"
+            },
+            {
+                text: "Zrób zdjęcie aparatem",
+                onPress: () => takeImage(),
+                style: "default"
+            },
+            {
+                text: "Anuluj",
+                style: "cancel"
+            }
+        ]);
+    }
+
     const handleEmailChange = async () => {
         if (!newEmail.trim()) {
             setEmailMessage("Wpisz nowy e-mail.");
@@ -66,8 +107,7 @@ export default function ProfileScreen() {
                 email: newEmail,
             });
 
-            await login(res.data);
-            setServerUser(res.data);
+            await refresh(res.data);
             setEmailMessage("E-mail został zaktualizowany!");
             setShowEmailForm(false);
             setNewEmail("");
@@ -102,8 +142,7 @@ export default function ProfileScreen() {
                 password: newPassword,
             });
 
-            await login(res.data);
-            setServerUser(res.data);
+            await refresh(res.data);
             setPasswordMessage("Hasło zostało pomyślnie zmienione!");
             setShowPasswordForm(false);
             setOldPassword("");
@@ -119,11 +158,11 @@ export default function ProfileScreen() {
     return (
         <Box flex={1} pt={20} px={5} bg="white" alignItems="center">
             <View>
-                <Image style={styles.profileImage} source={logo} />
+                <Image style={styles.profileImage} source={user.image === null ? {uri: user.image} : logo} />
             </View>
 
             <Text fontSize={32} fontWeight="bold" mt={3}>
-                {serverUser?.username || user.username}
+                {user.username}
             </Text>
 
             <Box
@@ -168,6 +207,7 @@ export default function ProfileScreen() {
                                     onPress={handleEmailChange}
                                     isLoading={emailLoading}
                                     colorScheme="blue"
+                                    mb={3}
                                 >
                                     Zapisz
                                 </Button>
@@ -226,6 +266,7 @@ export default function ProfileScreen() {
                                     onPress={handlePasswordChange}
                                     isLoading={passwordLoading}
                                     colorScheme="blue"
+                                    mb={3}
                                 >
                                     Zapisz
                                 </Button>
@@ -259,7 +300,7 @@ export default function ProfileScreen() {
 
                     <Divider mb={3} />
 
-                    <Pressable onPress={() => console.log("Zmien zdjecie profilowe")}>
+                    <Pressable onPress={() => handlePickImage()}>
                         <Text fontSize="md" mb={3}>
                             Zmień zdjęcie profilowe
                         </Text>

@@ -29,6 +29,15 @@ export const AuthProvider = ({ children }) => {
         loadUser();
     }, []);
 
+    const refresh = async (userData) => {
+        try {
+            setUser(userData);
+            await AsyncStorage.setItem("user", JSON.stringify(userData));
+        } catch (error) {
+            console.error("Błąd podczas logowania:", error);
+        }
+    }
+
     const login = async (userData) => {
         try {
             setUser(userData);
@@ -57,7 +66,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, isLoading }}>
+        <AuthContext.Provider value={{ user, isLoggedIn: !!user, login, logout, isLoading, refresh }}>
             {children}
         </AuthContext.Provider>
     );
