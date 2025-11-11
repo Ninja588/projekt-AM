@@ -50,7 +50,7 @@ export default function ProfileScreen() {
 
         if (!result.canceled) {
             const res = await axiosInstance.patch(`/users/${user.id}`, {
-                image: result.assets[0].uri
+                avatar: result.assets[0].uri
             });
             await refresh(res.data);
         }
@@ -67,7 +67,7 @@ export default function ProfileScreen() {
 
             if (!result.canceled) {
                 const res = await axiosInstance.patch(`/users/${user.id}`, {
-                    image: result.assets[0].uri
+                    avatar: result.assets[0].uri
                 });
                 await refresh(res.data);
             }
@@ -158,7 +158,7 @@ export default function ProfileScreen() {
     return (
         <Box flex={1} pt={20} px={5} bg="white" alignItems="center">
             <View>
-                <Image style={styles.profileImage} source={user.image === null ? {uri: user.image} : logo} />
+                <Image style={styles.profileImage} source={user.avatar !== null ? {uri: user.avatar} : logo} />
             </View>
 
             <Text fontSize={32} fontWeight="bold" mt={3}>
