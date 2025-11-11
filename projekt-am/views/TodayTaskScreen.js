@@ -3,7 +3,7 @@ import {useIsFocused} from "@react-navigation/native";
 import {useAuth} from "../backend/context/AuthContext";
 import axiosInstance from "../backend/axiosInstance";
 import {Badge, Box, Button, HStack, Pressable, Spinner, Text, VStack} from "native-base";
-import {SectionList, TextInput} from "react-native";
+import {SectionList, TextInput, Alert} from "react-native";
 
 export default function TodayTaskScreen({ navigation }) {
     const [tasks, setTasks] = useState([]);
@@ -53,7 +53,7 @@ export default function TodayTaskScreen({ navigation }) {
 
 
     // jak nie ma tych trzech kropek to kaplica (nadpisuje wtedy wszystkie dane i zostaje jedynie zmienione 'done' XD)
-    // trzy kropki robia kopie wszystkich pól i zmienia sie wtedy tylko 'done'
+    // trzy kropki robia kopie wszystkich pól i zmienia sie wtedy tylko 'done' GG
     const toggleDone = async (task) => {
         try {
             await axiosInstance.put(`/tasks/${task.id}`, {
@@ -108,6 +108,29 @@ export default function TodayTaskScreen({ navigation }) {
         }
     };
 
+    const deleteTask = async (task) => {
+        try {
+            await axiosInstance.delete(`/tasks/${task.id}`);
+            setTasks(prevTasks => prevTasks.filter(t => t.id !== task.id));
+        } catch (error) {
+            console.error("Error: ", error);
+        }
+    };
+
+    const handleLongPress = async(task) => {
+        Alert.alert('Usuwanie zadania', 'Czy napewno chcesz usunąć to zadanie?', [
+            {
+                text: "Usuń",
+                onPress: () => deleteTask(task),
+                style: "destructive"
+            },
+            {
+                text: "Anuluj",
+                style: "cancel"
+            }
+        ]);
+    }
+
     useEffect(() => {
         const fetchTasks = async () => {
             try {
@@ -132,6 +155,8 @@ export default function TodayTaskScreen({ navigation }) {
                     <Pressable
                         onPress={() => navigation.getParent().navigate("TaskDetails", { itemId: item.id })}
                         style={{ flex: 1 }}
+                        onLongPress={() => handleLongPress(item)}
+                        delayLongPress={500}
                     >
                         <VStack>
                             <Text fontSize="md" bold>{item.title}</Text>
