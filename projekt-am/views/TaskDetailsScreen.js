@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Image, Modal, TouchableOpacity } from "react-native";
 import {Box, Text, Center, Spinner, Button, VStack, Badge, ScrollView, HStack} from "native-base";
 import axiosInstance from "../backend/axiosInstance";
+import {useIsFocused} from "@react-navigation/native";
 
 export default function TaskDetailsScreen({ route, navigation }) {
     const [taskId, setTaskId] = useState(null);
     const [task, setTask] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const isFocused = useIsFocused();
 
     // state powiększenia
     const [selectedImage, setSelectedImage] = useState(null);
@@ -34,7 +37,7 @@ export default function TaskDetailsScreen({ route, navigation }) {
         };
 
         if (taskId) fetchTask();
-    }, [taskId]);
+    }, [taskId, isFocused]);
 
     const toggleDone = async () => {
         try {

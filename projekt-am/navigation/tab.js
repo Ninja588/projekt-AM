@@ -21,15 +21,15 @@ function Tabs() {
                     let color = focused ? "#007AFF" : "gray";
 
                     switch (route.name) {
-                        // case "Zadania":
+                        case "Zadania":
+                            iconName = "list-outline";
+                            break;
+                        // case "Nadchodzące":
                         //     iconName = "list-outline";
                         //     break;
-                        case "Nadchodzące":
-                            iconName = "list-outline";
-                            break;
-                        case "Dziś":
-                            iconName = "list-outline";
-                            break;
+                        // case "Dziś":
+                        //     iconName = "list-outline";
+                        //     break;
                         case "Kalendarz":
                             iconName = "calendar-outline";
                             break;
@@ -54,9 +54,9 @@ function Tabs() {
                 headerShown: false,
             })}
         >
-            {/*<Tab.Screen name="Zadania" component={TaskListScreen} />*/}
-            <Tab.Screen name="Dziś" component={TodayTaskScreen} />
-            <Tab.Screen name="Nadchodzące" component={IncomingTaskScreen} />
+            <Tab.Screen name="Zadania" component={TaskListScreen} />
+            {/*<Tab.Screen name="Dziś" component={TodayTaskScreen} />*/}
+            {/*<Tab.Screen name="Nadchodzące" component={IncomingTaskScreen} />*/}
             <Tab.Screen name="Kalendarz" component={CalendarScreen} />
             <Tab.Screen name="Statystyki" component={StatsScreen} />
             <Tab.Screen name="Motywacja" component={MotivationScreen} />

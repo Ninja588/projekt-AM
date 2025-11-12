@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useIsFocused} from "@react-navigation/native";
 import {useAuth} from "../backend/context/AuthContext";
 import axiosInstance from "../backend/axiosInstance";
@@ -113,7 +113,8 @@ export default function IncomingTaskScreen({navigation}) {
     );
 
     return (
-        <VStack flex={1} px={5} pt={20} bg="white">
+        <VStack flex={1} px={5} bg="white">
+            <Text bold fontSize={"xl"} textAlign={"center"} mb={1}>Priorytet:</Text>
             <HStack space={2} mb={4} justifyContent="center">
                 {["Wszystkie", "Wysoki", "Średni", "Niski"].map(level => (
                     <Button

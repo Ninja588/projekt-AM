@@ -1,118 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native";
-import { Box, Text, Spinner, Pressable, Badge, HStack, VStack, Button } from "native-base";
-import { useIsFocused } from "@react-navigation/native";
-import axiosInstance from "../backend/axiosInstance";
-import {useAuth} from "../backend/context/AuthContext";
+import React, { useState } from "react";
+import {Box, HStack, Button} from "native-base";
+import TodayTaskScreen from "./TodayTaskScreen";
+import IncomingTaskScreen from "./IncomingTaskScreen";
 
 export default function TaskListScreen({ navigation }) {
-    const [tasks, setTasks] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const isFocused = useIsFocused();
-
-    const { user } = useAuth();
-
-    // jak nie ma tych trzech kropek to kaplica (nadpisuje wtedy wszystkie dane i zostaje jedynie zmienione 'done' XD)
-    // trzy kropki robia kopie wszystkich pól i zmienia sie wtedy tylko 'done'
-    const toggleDone = async (task) => {
-        try {
-            await axiosInstance.put(`/tasks/${task.id}`, {
-                ...task,
-                done: !task.done
-            });
-            setTasks((prevTasks) =>
-                prevTasks.map((t) =>
-                    t.id === task.id ? { ...t, done: !t.done } : t
-                )
-            );
-        } catch (error) {
-            console.error("Error: ", error);
-        }
-    };
-
-    useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                setLoading(true);
-                // const response = await axiosInstance.get("/tasks");
-                const response = await axiosInstance.get(`/tasks?userId=${user.id}`);
-                setTasks(response.data);
-            } catch (error) {
-                console.error("Error: ", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (isFocused) fetchTasks();
-    }, [isFocused, user]);
-
-    const renderTask = ({ item }) => {
-        return (
-            <Pressable
-                onPress={() => {
-                    // console.log("Przekazuję taskId:", item.id);
-                    navigation.getParent().navigate("TaskDetails", {itemId: item.id})
-                }}
-            >
-                <Box
-                    bg="gray.100"
-                    p={4}
-                    rounded="2xl"
-                    mb={3}
-                    w={"98%"}
-                    ml={1}
-                    shadow={1}
-                >
-                    <HStack justifyContent="space-between" alignItems="center">
-                        <VStack>
-                            <Text fontSize="md" bold>
-                                {item.title}
-                            </Text>
-                            <Text fontSize="sm" color="gray.500">
-                                {item.date}
-                            </Text>
-                        </VStack>
-                        <Pressable
-                        onPress={() => toggleDone(item)}
-                        >
-                            <Badge
-                                colorScheme={item.done ? "green" : "red"}
-                                variant="solid"
-                                size="sm"
-                                left={3}
-                                rounded={"full"}
-                            >
-                                {item.done ? "✓" : "X"}
-                            </Badge>
-                        </Pressable>
-                    </HStack>
-                </Box>
-            </Pressable>
-        );
-    };
+    const [view, setView] = useState("today");
 
     return (
-        <Box flex={1} px={5} bg="white" pt={20}>
-            {loading ? (
-                <Spinner size="lg" />
-            ) : (
-                <FlatList
-                    data={tasks}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={renderTask}
-                    showsVerticalScrollIndicator={false}
-                />
-            )}
-            <Button
-                mt={5}
-                onPress={() => navigation.navigate("AddEditTask")}
-                colorScheme="blue"
-                rounded="2xl"
-                mb={5}
-            >
-                Dodaj zadanie
-            </Button>
+        <Box flex={1} bg="white">
+            <Box px={4} pt={20} pb={2} bg="white">
+                <HStack space={2} justifyContent="center">
+                    <Button
+                        size="sm"
+                        variant={view === "today" ? "solid" : "outline"}
+                        colorScheme={view === "today" ? "blue" : "gray"}
+                        onPress={() => setView("today")}
+                    >
+                        Dzisiejsze
+                    </Button>
+                    <Button
+                        size="sm"
+                        variant={view === "next" ? "solid" : "outline"}
+                        colorScheme={view === "next" ? "blue" : "gray"}
+                        onPress={() => setView("next")}
+                    >
+                        Nadchodzące
+                    </Button>
+                </HStack>
+            </Box>
+            <Box flex={1}>
+                {view === "today" ? (
+                    <TodayTaskScreen navigation={navigation} key="today" />
+                ) : (
+                    <IncomingTaskScreen navigation={navigation} key="next" />
+                )}
+            </Box>
         </Box>
     );
 }

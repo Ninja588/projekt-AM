@@ -188,7 +188,8 @@ export default function TodayTaskScreen({ navigation }) {
     };
 
     return (
-        <VStack flex={1} px={5} pt={20} bg="white">
+        <VStack flex={1} px={5} bg="white">
+            <Text bold fontSize={"xl"} textAlign={"center"} mb={1}>Priorytet:</Text>
             <HStack space={2} mb={4} justifyContent="center">
                 {["Wszystkie", "Wysoki", "Średni", "Niski"].map(level => (
                     <Button
