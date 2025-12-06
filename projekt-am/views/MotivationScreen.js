@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Center, Text, Button, Box } from "native-base";
 import quotes from "../assets/quotes/quotes.json";
+import { Accelerometer } from "expo-sensors";
 
 export default function MotivationScreen() {
     const [quote, setQuote] = useState(null);
     const [dailyQuote, setDailyQuote] = useState(null);
+
+    const lastShake = useRef(0);
 
     const getRandomQuote = () => {
         const random = quotes[Math.floor(Math.random() * quotes.length)];
@@ -27,6 +30,28 @@ export default function MotivationScreen() {
     useEffect(() => {
         getRandomQuote();
         getQuoteOfADay();
+
+        Accelerometer.setUpdateInterval(100);
+
+        const subscription = Accelerometer.addListener((data) => {
+            const { x, y, z } = data;
+
+            const acceleration = Math.sqrt(x*x + y*y + z*z);
+
+            const sensitivity = 1.78;
+
+            if (acceleration >= sensitivity) {
+                const now = Date.now();
+                if (now - lastShake.current > 500) {
+                    lastShake.current = now;
+                    getRandomQuote();
+                }
+            }
+        });
+
+        return () => {
+            subscription && subscription.remove();
+        };
     }, []);
 
     return (
@@ -51,6 +76,10 @@ export default function MotivationScreen() {
             <Button mt={10} onPress={getRandomQuote} colorScheme="blue" rounded="2xl">
                 Nowy cytat
             </Button>
+
+            <Text fontSize="xs" color="gray.400" mt={2}>
+                (lub potrząśnij telefonem)
+            </Text>
 
             <Box
                 position={"absolute"}
