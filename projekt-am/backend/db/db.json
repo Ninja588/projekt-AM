@@ -4,28 +4,32 @@
       "id": "1",
       "username": "janusz",
       "password": "1234",
-      "avatar": "file:///data/user/0/host.exp.exponent/cache/ImagePicker/08801654-afc5-498b-8272-f31763753efe.jpeg",
-      "email": "nowy@gmail.com"
+      "avatar": "file:///var/mobile/Containers/Data/Application/1E2A807E-E019-4FC7-8D7F-94FFB3126DCC/Library/Caches/ExponentExperienceData/@anonymous/projekt-am-6a9cf809-50eb-4266-a8ed-22d29d7ba0eb/ImagePicker/9B1F4136-76B2-4CF4-BB25-4384F5D0072B.jpg",
+      "email": "nowy@gmail.com",
+      "notificationsEnabled": true
     },
     {
       "id": "a4ac",
       "username": "test",
       "email": "test@gmail.com",
       "password": "1234",
-      "avatar": null
+      "avatar": null,
+      "notificationsEnabled": true
     }
   ],
   "tasks": [
     {
-      "id": "1",
-      "userId": 1,
+      "userId": "1",
       "title": "kupic mleko",
       "description": "kiedys wroci",
-      "done": true,
-      "date": "12.11.2025",
       "priority": "Wysoki",
+      "date": "12.11.2025",
       "tags": [],
-      "image": null
+      "images": [
+        "file:///var/mobile/Containers/Data/Application/1E2A807E-E019-4FC7-8D7F-94FFB3126DCC/Library/Caches/ExponentExperienceData/@anonymous/projekt-am-6a9cf809-50eb-4266-a8ed-22d29d7ba0eb/ImagePicker/70329F0E-5CD9-4ACC-BEE0-2C76CE21DF6D.jpg"
+      ],
+      "done": true,
+      "id": "1"
     },
     {
       "userId": "1",
@@ -82,7 +86,7 @@
         "Przyjaźń"
       ],
       "images": [
-        "file:///data/user/0/host.exp.exponent/cache/ImagePicker/2b32365b-6f94-4546-a507-1cb33d283634.jpeg"
+        "file:///var/mobile/Containers/Data/Application/1E2A807E-E019-4FC7-8D7F-94FFB3126DCC/Library/Caches/ExponentExperienceData/@anonymous/projekt-am-6a9cf809-50eb-4266-a8ed-22d29d7ba0eb/ImagePicker/EE74E563-C329-42FB-94F5-DBF1F74DDAF2.jpg"
       ],
       "done": false,
       "id": "1088"
@@ -125,6 +129,30 @@
         "Rest"
       ],
       "done": false,
+      "image": null
+    },
+    {
+      "id": "768e",
+      "userId": "1",
+      "title": "skibidi",
+      "description": "toilet",
+      "priority": "Niski",
+      "date": "18.11.2025",
+      "tags": [
+        "toaleta"
+      ],
+      "images": [],
+      "done": false
+    },
+    {
+      "id": "a7c3",
+      "userId": "1",
+      "title": "Wysrac sie",
+      "description": "",
+      "done": true,
+      "date": "16.11.2025",
+      "priority": "Średni",
+      "tags": [],
       "image": null
     }
   ]

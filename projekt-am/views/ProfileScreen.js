@@ -5,11 +5,13 @@ import logo from "../assets/images/blank.png";
 import axiosInstance from "../backend/axiosInstance";
 import { useAuth } from "../backend/context/AuthContext";
 
+import { scheduleDailyNotification, cancelAllNotifications, requsetNotification } from '../utils/notifications';
+
 import * as ImagePicker from 'expo-image-picker';
 
 export default function ProfileScreen() {
     const { user, logout, refresh } = useAuth();
-    const [notifications, setNotifications] = useState(true);
+    const [notifications, setNotifications] = useState(user.notificationsEnabled);
 
     const [showEmailForm, setShowEmailForm] = useState(false);
     const [newEmail, setNewEmail] = useState("");
@@ -155,6 +157,28 @@ export default function ProfileScreen() {
         }
     };
 
+    const toggleNotifications = async () => {
+        const newValue = !notifications;
+        setNotifications(newValue);
+
+        try {
+            const res = await axiosInstance.patch(`/users/${user.id}`, {
+                notificationsEnabled: newValue
+            });
+
+            await refresh(res.data);
+
+            if (newValue === true) {
+                await requsetNotification();
+            } else {
+                await cancelAllNotifications();
+            }
+        } catch (e) {
+            console.error("Błąd: ", e);
+            setNotifications(!newValue);
+        }
+    };
+
     return (
         <Box flex={1} pt={20} px={5} bg="white" alignItems="center">
             <View>
@@ -180,7 +204,7 @@ export default function ProfileScreen() {
                         <Text fontSize="md">Powiadomienia</Text>
                         <Switch
                             isChecked={notifications}
-                            onToggle={() => setNotifications(!notifications)}
+                            onToggle={toggleNotifications}
                             colorScheme="blue"
                         />
                     </HStack>

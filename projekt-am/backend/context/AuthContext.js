@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
+import { scheduleDailyNotification, cancelAllNotifications } from '../../utils/notifications';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -14,7 +16,15 @@ export const AuthProvider = ({ children }) => {
             try {
                 const storedUser = await AsyncStorage.getItem("user");
                 if (storedUser) {
+                    let parsedUser = JSON.parse(storedUser);
                     setUser(JSON.parse(storedUser));
+
+                    if(parsedUser.notificationsEnabled) {
+                        await scheduleDailyNotification(9, 0);
+                    } else {
+                        await cancelAllNotifications();
+                    }
+
                     navigation.reset( {
                         index: 0,
                         routes: [{ name: "Tabs" }],

@@ -51,7 +51,8 @@ export default function LoginScreen() {
                 username,
                 email,
                 password,
-                avatar: null
+                avatar: null,
+                notificationsEnabled: true
             };
 
             await axiosInstance.post("/users", newUser);
